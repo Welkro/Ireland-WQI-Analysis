@@ -467,6 +467,10 @@ The following dashboard provides a consolidated view of water quality parameters
 
 ![1727684292015](image/README/1727684292015.png)
 
+### **Additional Visualizations**
+
+Beyond the charts showcased in this article, the project's Jupyter Notebook (`ireland_WQI.ipynb`) contains additional visualizations that offer more insights into the water quality dataset. Users with access to the licensed version of LightningChart Python can explore these additional charts.
+
 ## **Conclusion**
 
 By leveraging LightningChart Python, this project shows how we can efficiently monitor water quality trends. This kind of water monitoring is critical for maintaining safe and healthy water bodies.
