@@ -117,35 +117,34 @@ The area chart displays the fluctuations in pH levels over the years. pH is a cr
 
 ```python
 # Group by Years and calculate the average pH value for each year
-# The pH values are averaged per year to identify trends over time
 grouped_data = ireland_water_data.groupby('Years')['pH'].mean().reset_index()
 
 # Extract x_values (Years) and y_values (average pH)
-# Convert each year to UNIX time in milliseconds for the x-axis
-x_values = [  
-    time.mktime(datetime.datetime(year, 1, 1).timetuple()) * 1000 for year in grouped_data['Years']  
+# Convert years to UNIX time for proper display on the x-axis
+x_values = [ 
+    time.mktime(datetime.datetime(year, 1, 1).timetuple()) * 1000 for year in grouped_data['Years']   
 ]
-y_values = grouped_data['pH'].tolist()  # List of average pH values for each year
+y_values = grouped_data['pH'].tolist()
 
-# Create the chart with a light theme and set the title
+# Create the chart
 chart = lc.ChartXY(
     theme=lc.Themes.Light,
     title='Average pH Over Years'
 )
 
-# Configure the x-axis for proper time display using DateTime tick strategy
+# Configure the x-axis for proper time display
 x_axis = chart.get_default_x_axis()
 x_axis.set_title("Year")
-x_axis.set_tick_strategy('DateTime')
+x_axis.set_tick_strategy('DateTime') 
 
-# Add an area series to visualize the average pH values over time
+# Add an area series
 series = chart.add_area_series(data_pattern="ProgressiveX")
 
-# Append the x and y values to the area series
+# Append the data to the area series
 series.add(x_values, y_values)
 
 # Open the chart
-chart.open()
+chart.open() 
 ```
 
 ![1727635784355](image/README/1727635784355.png)
@@ -158,40 +157,36 @@ The spline chart highlights how physical parameters such as temperature and tota
 
 ```python
 # Define the physical parameters to be visualized
-# These parameters measure key physical characteristics of water quality
 parameters = ['Dissolved Oxygen', 'Temperature', 'pH', 'Conductivity @25°C']
 
 # Group by Years and calculate the mean for the selected physical parameters
-# The data is grouped by year to calculate the average of each physical parameter for every year
 grouped_data = ireland_water_data.groupby('Years')[parameters].mean().reset_index()
 
 # Convert years to UNIX time for proper display on the x-axis
-# This conversion ensures that the years are properly plotted as time-based data
 x_values = [
     time.mktime(datetime.datetime(year, 1, 1).timetuple()) * 1000 for year in grouped_data['Years']
 ]
 
-# Create a line chart to visualize how physical parameters change over the years
+# Create the chart
 chart = lc.ChartXY(
     theme=lc.Themes.Light,
     title='Mean Physical Parameters Over Years'
 )
 
-# Configure the x-axis to display the years as dates
+# Configure the x-axis to display dates
 x_axis = chart.get_default_x_axis()
 x_axis.set_title("Years")
-x_axis.set_tick_strategy('DateTime')  # Use DateTime strategy to show the years correctly
+x_axis.set_tick_strategy('DateTime')
 
-# Add spline series for each physical parameter
-# Each parameter is visualized as a separate line in the chart, showing its trend over time
+# Add spline series for each parameter
 for parameter in parameters:
-    y_values = grouped_data[parameter].tolist()  # Get the y-values (mean values) for the parameter
+    y_values = grouped_data[parameter].tolist()
     series = chart.add_spline_series(data_pattern="ProgressiveX").append_samples(
-        x_values=x_values,  # X-values are the years (converted to UNIX time)
-        y_values=y_values   # Y-values are the mean values of the parameter
+        x_values=x_values,
+        y_values=y_values
     )
-    series.set_name(parameter)  # Set the name of the series to identify the parameter
-    series.set_line_thickness(2)  # Set a thicker line for better visibility
+    series.set_name(parameter)  # Set the series name for identification
+    series.set_line_thickness(2)
 
 legend = chart.add_legend()
 legend.add(chart)  # Attach all elements within the chart to the legend
@@ -246,12 +241,12 @@ for parameter in parameters:
         y_values=y_values
     )
         # Indicate scaling for ammonia and phosphate
-    if parameter == 'Ammonia-Total (as N)':
-        series.set_name(f'{parameter} (scaled x{scaling_factor})')
+    if parameter == 'Ammonia-Total (as N)': 
+        series.set_name(f'{parameter} (scaled x{scaling_factor})')  
     elif parameter == 'ortho-Phosphate (as P) - unspecified':
         series.set_name(f'{parameter} (scaled x{scaling_factor})')
     else:
-        series.set_name(parameter)
+        series.set_name(parameter)  
     series.set_line_thickness(2)
 
 legend = chart.add_legend()
@@ -337,7 +332,6 @@ BOD is an indicator of how much oxygen is needed to break down organic matter in
 
 ```python
 # Group data by CleanedWaterbodyName and calculate the mean of BOD - 5 days (Total)
-# BOD is averaged per waterbody to assess the oxygen demand across different locations
 parameter = ['BOD - 5 days (Total)']
 grouped_by_waterbody = ireland_water_data.groupby('CleanedWaterbodyName')[parameter].mean().reset_index()
 
@@ -354,16 +348,15 @@ chart = lc.BarChart(
     title='Mean BOD - 5 days (Total) by Waterbody'
 )
 
-# Sort bars in descending order and rotate waterbody labels for better readability
+# Sort bars in descending order and rotate waterbody labels for better visibility
 chart.set_sorting('descending')
 chart.set_label_rotation(90)
-chart.set_value_label_display_mode('hidden')  # Hide individual value labels for a cleaner look
+chart.set_value_label_display_mode('hidden')  # Hide value labels for a cleaner look
 
 # Assign the prepared data to the chart
 chart.set_data(data)
 
-# Set gradient color ranges based on BOD values to visualize water quality
-# Blue indicates low BOD (good water quality), red indicates high BOD (poor water quality)
+# Set gradient color ranges based on BOD values
 chart.set_palette_colors(
     steps=[
         {'value': 0, 'color': lc.Color(0, 0, 255)},   # Blue for low BOD
@@ -398,7 +391,6 @@ parameters = ['Alkalinity-total (as CaCO3)', 'Ammonia-Total (as N)', 'BOD - 5 da
 average_values = []
 
 # Iterate through each parameter and calculate the average value
-# For each parameter, we compute the mean value across the entire dataset
 for parameter in parameters:
     average_value = ireland_water_data[parameter].mean()
     # Append the calculated average as a dictionary with 'category' as the parameter name and 'value' as the mean
@@ -413,7 +405,7 @@ data = [{'category': item['category'], 'value': item['value']} for item in avera
 
 # Create a horizontal bar chart to visualize the average values across all parameters
 chart = lc.BarChart(
-    vertical=False,  # Set the chart orientation to horizontal
+    vertical=False,
     theme=lc.Themes.Light,
     title='Average Values Across All Parameters'
 )
@@ -423,7 +415,7 @@ chart.set_sorting('disabled')
 
 # Assign the prepared data to the chart
 chart.set_data(data)
-
+ 
 # Open the chart
 chart.open()
 ```
@@ -438,34 +430,30 @@ The spider chart offers a comparative view of different water quality parameters
 
 ```python
 # Define the time periods you want to compare
-# These are the years for which water quality parameters will be compared
 time_periods = [2007, 2011, 2015, 2019, 2023]
 
-# Create a spider chart with a circular web to compare water quality parameters across years
-# A spider chart is useful for comparing multiple parameters over a set of time periods
+# Create a spider chart with a circular web and light theme to visualize parameter comparison across years
 chart = lc.SpiderChart(
     theme=lc.Themes.Light,
     title='Water Quality Parameters Comparison Over Years'
 )
-chart.set_web_mode('circle')  # Set the web shape to circular for better readability
+chart.set_web_mode('circle')  # Set the web shape to circular
 
-# Define the water quality parameters to be compared
-# These parameters measure various aspects of water quality such as Dissolved Oxygen, pH, and Temperature
-parameters = ['Dissolved Oxygen', 'Temperature', 'pH', 'Conductivity @25°C', 
-              'Chloride', 'Total Hardness (as CaCO3)', 'True Colour']
+# Define the water quality parameters to be plotted on the spider chart
+parameters = ['Dissolved Oxygen', 'Temperature', 'pH', 'Conductivity @25°C', 'Chloride', 'Total Hardness (as CaCO3)', 'True Colour']
 
-# Function to calculate the average values of water quality parameters for a given year
-# This function filters the dataset by year and calculates the mean for each parameter
+# Function to calculate the average values for the water quality parameters in a specific year
+# This function filters the data by the year and returns the average for each parameter
 def get_average_values_for_year(year):
     data_for_year = ireland_water_data[ireland_water_data['Years'] == year]
     return [data_for_year[param].mean() for param in parameters]
 
-# Add data series for each year
-# Each year will be represented as a separate series in the spider chart, showing how parameter values change over time
+# Add a data series to the chart for each time period
+# For each year, calculate the average parameter values and plot them as a series on the spider chart
 for year in time_periods:
-    avg_values = get_average_values_for_year(year)  # Calculate average parameter values for the year
+    avg_values = get_average_values_for_year(year)  # Get the average values for the specified year
     points = [{'axis': param, 'value': value} for param, value in zip(parameters, avg_values)]  # Prepare data points
-    chart.add_series().add_points(points).set_name(f'{year}')  # Add series with a label for the year
+    chart.add_series().add_points(points).set_name(f'{year}')  # Add the series to the chart with the corresponding year label
 
 # Open the chart
 chart.open()
