@@ -14,7 +14,7 @@ LightningChart Python is a high-performance library designed to handle large dat
 
 ### **Setting Up Python Environment**
 
-To set up the Python environment for this project, you need to install Python and the necessary libraries. This includes installing LightningChart Python and Pandas.Installing Python:
+To set up the Python environment for this project, you need to install Python and the necessary libraries. This includes installing LightningChart Python and Pandas. Installing Python:
 
 Here's a quick setup guide:
 
